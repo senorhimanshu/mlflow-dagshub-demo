@@ -13,6 +13,9 @@ iris = load_iris()
 X = iris.data   
 y = iris.target
 
+import dagshub
+dagshub.init(repo_owner='senorhimanshu', repo_name='mlflow-dagshub-demo', mlflow=True)
+
 # split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42)
 
@@ -23,7 +26,8 @@ max_depth = 15
 
 mlflow.set_experiment("iris-dt")
 # mlflow.set_tracking_uri('http://localhost:5000')
-mlflow.set_tracking_uri('http://127.0.0.1:5000')
+# mlflow.set_tracking_uri('http://127.0.0.1:5000')
+mlflow.set_tracking_uri('https://dagshub.com/senorhimanshu/mlflow-dagshub-demo.mlflow')
 
 # with mlflow.start_run(run_name="himanshu-dt"):    # to name the run
 with mlflow.start_run():
