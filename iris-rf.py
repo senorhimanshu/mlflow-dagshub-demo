@@ -2,7 +2,7 @@ import mlflow
 import mlflow.sklearn
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -19,12 +19,13 @@ dagshub.init(repo_owner='senorhimanshu', repo_name='mlflow-dagshub-demo', mlflow
 # split the dataset into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42)
 
-# define the parameters for the DecisionTreeClassifier
-max_depth = 10
+# define the parameters for the RandomForestClassifier
+max_depth = 5
+n_estimators = 100
 
 # apply mlflow
 
-mlflow.set_experiment("iris-dt")
+mlflow.set_experiment("iris-rf")
 # mlflow.set_tracking_uri('http://localhost:5000')
 # mlflow.set_tracking_uri('http://127.0.0.1:5000')
 mlflow.set_tracking_uri('https://dagshub.com/senorhimanshu/mlflow-dagshub-demo.mlflow')
@@ -32,9 +33,9 @@ mlflow.set_tracking_uri('https://dagshub.com/senorhimanshu/mlflow-dagshub-demo.m
 # with mlflow.start_run(run_name="himanshu-dt"):    # to name the run
 with mlflow.start_run():
 
-    dt = DecisionTreeClassifier(max_depth = max_depth, random_state = 42)
-    dt.fit(X_train, y_train)
-    y_pred = dt.predict(X_test)
+    rf = RandomForestClassifier(max_depth = max_depth, n_estimators=n_estimators, random_state = 42)
+    rf.fit(X_train, y_train)
+    y_pred = rf.predict(X_test)
 
     accuracy = accuracy_score(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
@@ -43,6 +44,7 @@ with mlflow.start_run():
     mlflow.log_metric("accuracy", accuracy) 
     
     mlflow.log_param("max_depth", max_depth)
+    mlflow.log_param("n_estimators", n_estimators)
 
     # create a confusion matrix plot
     plt.figure(figsize = (6,6))
@@ -61,11 +63,11 @@ with mlflow.start_run():
     mlflow.log_artifact(__file__)  
 
     # log the model
-    mlflow.sklearn.log_model(dt, artifact_path = "decision_tree_model")
+    mlflow.sklearn.log_model(rf, artifact_path = "random_forest_model")
 
     # set tags (helpful for searching and filtering runs)
-    mlflow.set_tag("author", "himanshu")
-    mlflow.set_tag("model", "DecisionTreeClassifier")
+    mlflow.set_tag("author", "rahul")
+    mlflow.set_tag("model", "RandomForestClassifier")
 
     print("accuracy", accuracy)
     print("confusion matrix\n", cm)
